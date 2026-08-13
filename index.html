@@ -60,7 +60,7 @@
 <script>
 (()=>{
 "use strict";
-const ASSETS={player:"assets/Chara000.png",fainting:"assets/Chara000Fainting.png",background:"assets/mogumogu_bg00.png",foreground:"assets/mogumogu_bg01.png",stage2Background:"assets/mogumogu_bg02.png",stage2Foreground:"assets/mogumogu_bg03.png"};
+const ASSETS={player:"assets/Chara000.png",fainting:"assets/Chara000Fainting.png",macaron:"assets/Macaron00.png",background:"assets/mogumogu_bg00.png",foreground:"assets/mogumogu_bg01.png",stage2Background:"assets/mogumogu_bg02.png",stage2Foreground:"assets/mogumogu_bg03.png"};
 const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d",{alpha:false}),$=s=>document.querySelector(s);
 const els={score:$("#score"),time:$("#time"),hearts:$("#hearts"),bar:$("#feverBar"),combo:$("#combo"),msg:$("#message"),title:$("#title"),result:$("#result"),flash:$("#flash")};
 const sounds={eat:$("#soundEat"),rare:$("#soundRare"),bad:$("#soundBad"),stun:$("#soundStun"),fever:$("#soundFever")};
@@ -71,7 +71,7 @@ const objects=[],particles=[],rings=[],rays=[],texts=[]; const keys={left:false,
 const player={x:0,y:0,w:108,h:108,targetX:null,bob:0,reaction:"",reactionTime:0};
 let gamepadActionHeld=false,gamepadStartHeld=false,gamepadBackHeld=false,gamepadNavHeld=0,gamepadFocusIndex=0;
 const TYPES=[
- {kind:"apple",points:10,w:76,good:true,color:"#ff4b52"},{kind:"strawberry",points:12,w:70,good:true,color:"#ff3d80"},{kind:"donut",points:20,w:82,good:true,color:"#ff9bd5"},{kind:"cake",points:30,w:88,good:true,color:"#fff16b"},{kind:"grapes",points:15,w:76,good:true,color:"#a876ff"},{kind:"burger",points:25,w:85,good:true,color:"#ffad3d"},{kind:"honey",points:100,w:106,good:true,rare:true,color:"#ffd629"},
+ {kind:"apple",points:10,w:76,good:true,color:"#ff4b52"},{kind:"strawberry",points:12,w:70,good:true,color:"#ff3d80"},{kind:"donut",points:20,w:82,good:true,color:"#ff9bd5"},{kind:"macaron",points:22,w:92,good:true,color:"#f2a2d2"},{kind:"cake",points:30,w:88,good:true,color:"#fff16b"},{kind:"grapes",points:15,w:76,good:true,color:"#a876ff"},{kind:"burger",points:25,w:85,good:true,color:"#ffad3d"},{kind:"honey",points:100,w:106,good:true,rare:true,color:"#ffd629"},
  {kind:"bomb",points:-30,w:79,bad:true,color:"#ff3838"},{kind:"boot",points:0,w:78,bad:true,stun:true,color:"#a87655"},{kind:"skull",points:-25,w:80,bad:true,color:"#d8e1d8"}
 ];
 function load(){return Promise.all(Object.entries(ASSETS).map(([k,src])=>new Promise(resolve=>{let im=new Image; im.onload=()=>{imgs[k]=im;resolve()};im.onerror=resolve;im.src=src})));}
@@ -101,6 +101,7 @@ for(let i=rings.length-1;i>=0;i--){rings[i].r+=300*dt;rings[i].a-=dt*1.65;if(rin
 if(feverTime>0){feverTime-=dt;if(feverTime<=0)message("FEVER END")}if(slowTime>0)slowTime-=dt;if(stunTime>0){stunTime-=dt;if(stunTime<=0)message("RECOVER!")}if(stageTransition>0)stageTransition-=dt;shake=Math.max(0,shake-42*dt);flashA=Math.max(0,flashA-dt*1.45);els.flash.style.opacity=flashA;updateUI();}
 function tile(im,y,alpha=1){if(!im)return;let dw=W,dh=H,off=y%H;ctx.globalAlpha=alpha;ctx.drawImage(im,0,off-H,dw,dh);ctx.drawImage(im,0,off,dw,dh);ctx.globalAlpha=1;}
 function itemArt(kind,size){
+ if(kind==="macaron"&&imgs.macaron){ctx.save();ctx.drawImage(imgs.macaron,-size/2,-size/2,size,size);ctx.restore();return}
  const s=size/100;ctx.save();ctx.scale(s,s);ctx.lineJoin="round";ctx.lineCap="round";ctx.lineWidth=5;ctx.strokeStyle="#4b2d25";
  const circle=(x,y,r,fill,stroke=true)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();if(stroke)ctx.stroke()};
  if(kind==="apple"){circle(-17,8,30,"#f23f4c");circle(17,8,30,"#ff5960");ctx.fillStyle="#5a3524";ctx.fillRect(-3,-39,7,23);ctx.fillStyle="#61bc55";ctx.beginPath();ctx.ellipse(17,-32,20,10,-.45,0,Math.PI*2);ctx.fill();ctx.stroke()}
